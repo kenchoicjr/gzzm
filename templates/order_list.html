@@ -1,0 +1,495 @@
+{% extends 'master.html' %}
+{% block content %}
+    <!-- start: Content -->
+    <div id="content" class="span10">
+
+
+        <div class="row-fluid">
+            <div class="box span12">
+                <div class="box-header" data-original-title="">
+                    <h2><i class="icon-user"></i><span class="break"></span>工单汇总</h2>
+                    <div class="box-icon">
+                        <a href="#" class="btn-setting"><i class="icon-plus"></i></a>
+                        <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                        <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                    </div>
+                </div>
+                <div class="box-content">
+                    <table class="table table-striped table-bordered bootstrap-datatable datatable">
+                        <thead>
+                        <tr>
+                            <th>学校</th>
+                            <th>终端</th>
+                            <th>工单内容</th>
+                            <th>创建日期</th>
+                            <th>完成日期</th>
+                            <th>工程师</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>{{ order.school.school_name }}</td>
+                                <td class="center">{{ order.terminial.terminial_name }}</td>
+                                <td class="center">{{ order.job }}</td>
+                                <td class="center">{{ order.create_date }}</td>
+                                <td class="center">{{ order.comleted_date }}</td>
+                                <td class="center">{{ order.user.nick_name }}</td>
+                                <td class="center">
+                                    <span class="label label-info">{{ order.status.status_name }}</span>
+                                </td>
+                                <td class="center">
+                                    <a class="btn btn-info" name="btn-setting2" href={{ order.id }}>
+                                        <i class="icon-edit "></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div><!--/span-->
+
+        </div><!--/row-->
+
+
+    </div>
+    <!-- end: Content -->
+
+    </div><!--/fluid-row-->
+    <!--新建工单-->
+    <div class="modal hide fade" id="myModal">
+        <div class="modal-body">
+            <div class="row-fluid">
+                <div class="box span12">
+                    <div class="box-header">
+                        <h2><i class="icon-edit"></i>新建工单 </h2>
+                        {#						<div class="box-icon">#}
+                        {#							<a href="#" class="btn-setting"><i class="icon-wrench"></i></a>#}
+                        {#							<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>#}
+                        {#							<a href="#" class="btn-close"><i class="icon-remove"></i></a>#}
+                        {#						</div>#}
+                    </div>
+                    <div class="box-content">
+
+                        <form class="form-horizontal" action="/order_add_save/" method="post"/>
+                        {% csrf_token %}
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">学校 </label>
+                            <div class="controls">
+                                <input type="text" class="span6 typeahead" name="school_name" id="school_name"
+                                       data-provide="typeahead" data-items="4" data-source='[1,2,3,4,5,6,7,8,9]'/>
+                                <p class="help-block">输入学校名称的字搜索！ </p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">终端名称 </label>
+                            <div class="controls">
+                                <select id="terminial_namea" name="terminial_namea">
+                                    <option value="0" selected="selected">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">工单内容 </label>
+                            <div class="controls">
+                                {#								<input type="text" name="job" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+                                <textarea id="textarea2" class="wscont" name="job" rows="10"
+                                          style="width:280px; height:100px"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">工程师 </label>
+                            <div class="controls">
+                                <select id="user" name="user">
+                                    <option value="0" selected="selected">请选择工程师</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">状态 </label>
+                            <div class="controls">
+                                <select id="status" name="status">
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">工单分类 </label>
+                            <div class="controls">
+                                <select id="classification" name="classification">
+                                    <option value="0" selected="selected">请选择工单分类</option>
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">问题分类 </label>
+                            <div class="controls">
+                                <select id="order_type_name" name="order_type_name">
+                                    <
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">预估分值 </label>
+                            <div class="controls">
+                                <select id="order_type_value" name="order_type_value" readonly="readonly"
+                                        disabled="disabled">
+
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">实际分值 </label>
+                            <div class="controls">
+                                <input type="text" name="value1" class="span6 typeahead" id="typeahead"
+                                       data-provide="typeahead" data-items="4" data-source='[]'/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">最终分值 </label>
+                            <div class="controls">
+                                <input type="text" name="value2" class="span6 typeahead" id="typeahead"
+                                       data-provide="typeahead" data-items="4" data-source='[]'/>
+                            </div>
+                        </div>
+
+
+                        <div class="control-group">
+                            <label class="control-label" for="textarea2">处理方法 </label>
+                            <div class="controls">
+                                <textarea id="textarea2" class="wscont" name="remarks" rows="10"
+                                          style="width:280px; height:300px"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                            <button type="reset" data-dismiss="modal" class="btn">退出</button>
+                        </div>
+                        </form>
+
+                    </div>
+                </div><!--/span-->
+
+            </div><!--/row-->
+        </div>
+
+    </div>
+    <!--编辑工单-->
+    <div class="modal hide fade" id="myModal2">
+
+        <div class="modal-body">
+            <div class="row-fluid">
+                <div class="box span12">
+                    <div class="box-header">
+                        <h2><i class="icon-edit"></i>编辑工单</h2>
+
+                    </div>
+                    <div class="box-content">
+
+                        <form class="form-horizontal" action="/order_edit_save/" method="post"/>
+                        {% csrf_token %}
+                        <input type="hidden" name="orderide" value='' }/>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">学校 </label>
+                            <div class="controls">
+                                <input type="text" class="span6 typeahead" name="school_namee" id="typeahead"
+                                       data-provide="typeahead" data-items="4" data-source='[]' readonly="readonly"/>
+                                {#								<p class="help-block">输入学校名称的字搜索！ </p>#}
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">终端名称 </label>
+                            <div class="controls">
+                                <input type="text" class="span6 typeahead" name="terminial_namee" id="typeahead"
+                                       data-provide="typeahead" data-items="4" data-source='[]' readonly="readonly"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">工单内容 </label>
+                            <div class="controls">
+                                {#								<input type="text" name="jobe" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+                                <textarea id="textarea2" class="wscont" name="jobe" rows="10"
+                                          style="width:280px; height:100px"></textarea>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">工程师 </label>
+                            <div class="controls">
+                                <select id="usere" name="usere">
+
+                                </select>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">状态 </label>
+                            <div class="controls">
+                                <select id="statuse" name="statuse">
+
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">工单分类 </label>
+                            <div class="controls">
+                                <select id="classificatione" name="classificatione">
+
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">问题分类 </label>
+                            <div class="controls">
+                                <select id="order_type_namee" name="order_type_namee">
+
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">预估分值 </label>
+                            <div class="controls">
+                                <select id="order_type_valuee" name="order_type_valuee" readonly="readonly"
+                                        disabled="disabled">
+
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">实际分值 </label>
+                            <div class="controls">
+                                <input type="text" name="value1e" class="span6 typeahead" id="typeahead"
+                                       data-provide="typeahead" data-items="4" data-source='[]'/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="typeahead">最终分值 </label>
+                            <div class="controls">
+                                <input type="text" name="value2e" class="span6 typeahead" id="typeahead"
+                                       data-provide="typeahead" data-items="4" data-source='[]'/>
+                            </div>
+                        </div>
+
+
+                        <div class="control-group">
+                            <label class="control-label" for="textarea2">处理方法</label>
+                            <div class="controls">
+                                <textarea id="textarea2" class="wscont" name="remarkse" rows="10"
+                                          style="width:280px; height:300px"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">保存</button>
+                            <button type="reset" data-dismiss="modal" class="btn">退出</button>
+                        </div>
+                        </form>
+
+                    </div>
+                </div><!--/span-->
+
+            </div><!--/row-->
+        </div>
+
+    </div>
+{% endblock %}
+{% block js %}
+    <script>
+        $(function () {
+
+            $("button[type=\"reset\"]").click(function () {
+
+                $("input[name='school_name']").val("");
+                {#alert(data.school[1]);#}
+                $("input[name='terminial_name']").val("");;
+                $("textarea[name='job']").val("");
+                $("select[name='user']").empty();
+                $("select[name='status']").empty();
+                $("select[name='classification']").empty();
+                $("select[name='order_type_name']").empty();
+                $("select[name='order_type_value']").empty();
+                $("input[name='value1']").val("");
+                $("input[name='value2']").val("");
+                $("textarea[name='remarks']").val("");
+
+
+            });
+            $(".btn-setting").click(function () {
+                {#alert(1)#}
+                $("input[name='school_name']").val("");
+                {#alert(data.school[1]);#}
+                $("input[name='terminial_name']").val("");
+                $("textarea[name='job']").val("");
+                $("select[name='user']").val("");
+                $("select[name='status']").val("");
+                $("select[name='classification']").val("");
+                $("select[name='order_type_name']").val("");
+                $("select[name='order_type_value']").val("");
+                $("input[name='value1']").val("");
+                $("input[name='value2']").val("");
+                $("textarea[name='remarks']").val("");
+                $.ajax({
+                    url: '/order_add/',
+                    type: 'post',
+                    data: {}
+                }).done(function (data) {
+                    {#alert(data.schoolJson)#}
+                    $("input[name='school_name']").attr("data-source", data.schoolJson);
+                    for (var i = 0, len = data.users.length; i < len; i++) {
+                        $new = $("<option value=" + data.users[i][0] + ">" + data.users[i][1] + "</option>");
+                        $("#user").append($new);
+                    }
+                    for (var i = 0, len = data.status.length; i < len; i++) {
+                        $new = $("<option value=" + data.status[i][0] + ">" + data.status[i][1] + "</option>");
+                        $("#status").append($new);
+                    }
+                    for (var i = 0, len = data.classification.length; i < len; i++) {
+                        $new = $("<option value=" + data.classification[i][0] + ">" + data.classification[i][1] + "</option>");
+                        $("#classification").append($new);
+                    }
+                    for (var i = 0, len = data.order_type.length; i < len; i++) {
+                        $new = $("<option value=" + data.order_type[i][0] + ">" + data.order_type[i][1] + "</option>");
+                        $("#order_type_name").append($new);
+                    }
+                    for (var i = 0, len = data.order_type.length; i < len; i++) {
+                        $new = $("<option value=" + data.order_type[i][0] + ">" + data.order_type[i][2] + "</option>");
+                        $("#order_type_value").append($new);
+                    }
+                    if (data.user_role!="管理员") {
+                        $("input[name='value1']").parent().parent().hide();
+                        $("input[name='value2']").parent().parent().hide();
+                    }
+                });
+
+            });
+            $("#order_type_name").change(function () {
+                {#alert()#}
+                $("select[name='order_type_value']").val($("#order_type_name").val()).attr("selected", true);
+            });
+
+            $("#order_type_namee").change(function () {
+                {#alert()#}
+                $("select[name='order_type_valuee']").val($("#order_type_namee").val()).attr("selected", true);
+            });
+            $("#school_name").change(function () {
+                $.ajax({
+                    url: '/termail_a/',
+                    type: 'post',
+                    data: {"school_name": $("#school_name").val()}
+                }).done(function (data) {
+                    $("#terminial_namea").empty();
+                    for (var i = 0, len = data.termailJson.length; i < len; i++) {
+                        $new = $("<option value=" + data.termailJson[i][0] + ">" + data.termailJson[i][1] + "</option>");
+                        $("#terminial_namea").append($new);
+                    }
+
+                })
+            });
+
+            $("#classification").change(function () {
+                $("#order_type_name").empty();
+                $.ajax({
+                    url: '/classification_a/',
+                    type: 'post',
+                    data: {"classification": $("#classification").val()}
+                }).done(function (data) {
+                    for (var i = 0, len = data.classificationJson.length; i < len; i++) {
+                        $new = $("<option value=" + data.classificationJson[i][0] + ">" + data.classificationJson[i][1] + "</option>");
+                        $("#order_type_name").append($new);
+                    }
+
+                })
+            });
+
+            $("#classificatione").change(function () {
+                $("#order_type_namee").empty();
+                $.ajax({
+                    url: '/classification_a/',
+                    type: 'post',
+                    data: {"classification": $("#classificatione").val()}
+                }).done(function (data) {
+                    for (var i = 0, len = data.classificationJson.length; i < len; i++) {
+                        $new = $("<option value=" + data.classificationJson[i][0] + ">" + data.classificationJson[i][1] + "</option>");
+                        $("#order_type_namee").append($new);
+                    }
+
+                })
+            });
+            $("a[name=\"btn-setting2\"]").click(function (b) {
+                b.preventDefault();
+                {#alert($(this).attr('href'));#}
+                $("#myModal2").modal("show");
+
+                $.ajax({
+                    url: '/order_edit/',
+                    type: 'post',
+                    data: {"id": $(this).attr('href')}
+
+                }).done(function (data) {
+                    $("#usere").empty();
+                    $("#statuse").empty();
+                    $("#classificatione").empty();
+                    $("#order_type_namee").empty();
+                    {#alert(data.users)#}
+                    $("#order_type_valuee").empty();
+                    for (var i = 0, len = data.users.length; i < len; i++) {
+                        $new = $("<option value=" + data.users[i][0] + ">" + data.users[i][1] + "</option>");
+                        $("#usere").append($new);
+                    }
+                    for (var i = 0, len = data.status.length; i < len; i++) {
+                        $new = $("<option value=" + data.status[i][0] + ">" + data.status[i][1] + "</option>");
+                        $("#statuse").append($new);
+                    }
+                    {#alert(data.classification)#}
+                    for (var i = 0, len = data.classification.length; i < len; i++) {
+                        $new = $("<option value=" + data.classification[i][0] + ">" + data.classification[i][1] + "</option>");
+                        $("#classificatione").append($new);
+                    }
+                    for (var i = 0, len = data.order_type.length; i < len; i++) {
+                        $new = $("<option value=" + data.order_type[i][0] + ">" + data.order_type[i][1] + "</option>");
+                        $("#order_type_namee").append($new);
+                    }
+                    for (var i = 0, len = data.order_type.length; i < len; i++) {
+                        $new = $("<option value=" + data.order_type[i][0] + ">" + data.order_type[i][2] + "</option>");
+                        $("#order_type_valuee").append($new);
+                    }
+                    if (data.user_role!="管理员") {
+                        $("input[name='value1e']").parent().parent().hide();
+                        $("input[name='value2e']").parent().parent().hide();
+                    }
+                    {#alert(data.orders[5]);#}
+                    $("input[name='school_namee']").val(data.orders[0]);
+                    {#alert(data.school[1]);#}
+                    $("input[name='terminial_namee']").val(data.orders[1]);
+                    $("textarea[name='jobe']").val(data.orders[2]);
+                    $("select[name='usere']").val(data.orders[3]).attr("selected", true);
+                    $("select[name='statuse']").val(data.orders[4]).attr("selected", true);
+                    $("select[name='classificatione']").val(data.orders[5]).attr("selected", true);
+                    $("select[name='order_type_namee']").val(data.orders[6]).attr("selected", true);
+                    $("select[name='order_type_valuee']").val(data.orders[6]).attr("selected", true);
+                    $("input[name='value1e']").val(data.orders[7]);
+                    $("input[name='value2e']").val(data.orders[8]);
+                    $("textarea[name='remarkse']").val(data.orders[9]);
+                    $("input[name='orderide']").val(data.orders[10]);
+                    if  (($("select[name='statuse']").val()=="2" || $("select[name='statuse']").val()=="3")&& data.user_role=="城市负责人"){
+                        $("select").attr('disabled', true);
+                        $("input").attr('readonly', true);
+                        $("textarea").attr('readonly', true);
+                    }
+                });
+            });
+        })
+    </script>
+    <script src="/static/js/custom.min.js"></script>
+{% endblock %}

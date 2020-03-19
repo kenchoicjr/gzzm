@@ -1,0 +1,396 @@
+{% extends 'master.html' %}
+        {% block content %}
+        <!-- start: Content -->
+        <div id="content" class="span10">
+
+
+        <div class="row-fluid">
+            <div class="box span12">
+                <div class="box-header" data-original-title="">
+                    <h2><i class="icon-user"></i><span class="break"></span>{{ school.school_name }}</h2>
+                    <div class="box-icon">
+                        <a href="#" class="btn-setting"><i class="icon-plus"></i></a>
+                        <a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>
+                        <a href="#" class="btn-close"><i class="icon-remove"></i></a>
+                    </div>
+                </div>
+                <div class="box-content">
+                    <table class="table table-striped table-bordered bootstrap-datatable datatable">
+                      <thead>
+                          <tr>
+                              <th>终端名</th>
+                              <th>硬件维保日期</th>
+                              <th>TeamViewer</th>
+                              <th>Anydesk</th>
+                              <th>查看工单/编辑</th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                      {%for terminial in terminials %}
+                        <tr>
+                            <td>{{ terminial.terminial_name }}{{ terminial.address }}</td>
+                            <td class="center">{{ terminial.hardware_period }}</td>
+                            <td class="center">{{ terminial.teamviewerid }}</td>
+                            <td class="center">{{ terminial.anydeskid }}</td>
+                            <td class="center">
+                                <a class="btn btn-success" href="/order_list/?school_id={{ school.id }}">
+										<i class="icon-zoom-in "></i>
+									</a>
+									<a class="btn btn-info" name="btn-setting2" href={{ terminial.id }}>
+										<i class="icon-edit "></i>
+									</a>
+                            </td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                  </table>
+                </div>
+            </div><!--/span-->
+
+        </div><!--/row-->
+
+
+        </div>
+        <!-- end: Content -->
+
+        </div><!--/fluid-row-->
+         <div class="modal hide fade" id="myModal">
+{#			<div class="modal-header">#}
+{#				<button type="button" class="close" data-dismiss="modal">×</button>#}
+{#				<h3>新增学校</h3>#}
+{#			</div>#}
+			<div class="modal-body">
+				<div class="row-fluid">
+				<div class="box span12">
+					<div class="box-header">
+						<h2><i class="icon-edit"></i>添加终端</h2>
+					</div>
+					<div class="box-content">
+
+						<form class="form-horizontal" action="/terminial_list_add/" method="post"/>
+                        {% csrf_token %}
+{#						  <fieldset>#}
+							<div class="control-group">
+							  <label class="control-label" for="typeahead">终端名称 </label>
+							  <div class="controls">
+								<input type="text" class="span6 typeahead" name="terminial_name" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />
+{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">学校 </label>
+							  <div class="controls">
+								<input type="text" class="span6 typeahead" name="school_name" id="typeahead" data-provide="typeahead" data-items="4" value={{ school.school_name }}  readonly="readonly"/>
+{#                                  data-source='{{ schools }}'#}
+								<p class="help-block">输入学校名称的字搜索！ </p>
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">TeamViewerID </label>
+							  <div class="controls">
+								<input type="text" name="teamviewerid" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">AnyDeskID </label>
+							  <div class="controls">
+								<input type="text" name="anydeskid" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">地址 </label>
+							  <div class="controls">
+								<input type="text" name="address" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label"  for="typeahead">学校联系人 </label>
+							  <div class="controls">
+								<input type="text" name="contect_person" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label"  for="typeahead">上门维护人 </label>
+							  <div class="controls">
+								<input type="text" name="contect_person2" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />
+							  </div>
+							</div>
+
+							<div class="control-group">
+							  <label class="control-label" for="date01">硬件维保到期日 </label>
+							  <div class="controls">
+                                  <p class="help-block">[MM-DD-YYYY]</p>
+								<input type="text" name="hardware_period" class="input-xlarge datepicker" id="date01" value="09/09/2009" />
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">终端型号 </label>
+							  <div class="controls">
+                                  <select id="terminial_type" name="terminial_type" >
+                                      <option value="" selected="selected">请选择</option>
+                                       {% for terminialType in terminialTypes %}
+                                          <option value={{ terminialType.id }}>{{ terminialType.type_name }}</option>
+                                      {% endfor %}
+                                  </select>
+
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">打印机型号 </label>
+							  <div class="controls">
+                                  <select id="printer" name="printer" >
+                                      <option value="" selected="selected">请选择</option>
+                                       {% for printer in printers %}
+                                          <option value={{ printer.id }}>{{ printer.printer_name }}</option>
+                                      {% endfor %}
+                                  </select>
+
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">一卡通型号 </label>
+							  <div class="controls">
+                                  <select id="wiscard_name" name="wiscard_name" >
+                                      <option value="" selected="selected">请选择</option>
+                                       {% for wiscard in wiscards %}
+                                          <option value={{ wiscard.id }}>{{ wiscard.wiscard_name }}</option>
+                                      {% endfor %}
+                                  </select>
+
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="textarea2">备注</label>
+							  <div class="controls">
+                                  <textarea  id="textarea2" class="wscont" name="remarks" rows="20" style="width:280px; height:300px">向日葵：\r\n\ 打印机序列号：\r\n\ 一卡通配置信息：</textarea>
+							  </div>
+							</div>
+							<div class="form-actions">
+							  <button type="submit" class="btn btn-primary">保存</button>
+							  <button type="reset" id="canceladdschool" name="canceladdschool" data-dismiss="modal" class="btn">退出</button>
+							</div>
+                            <input type="hidden" name="school_id" value={{ school.id }}>
+{#						  </fieldset>#}
+						</form>
+
+					</div>
+				</div><!--/span-->
+
+			</div><!--/row-->
+			</div>
+{#			<div class="modal-footer">#}
+{#				<a href="#" class="btn" data-dismiss="modal">取消</a>#}
+{#				<a href="#" class="btn btn-primary">保存</a>#}
+{#			</div>#}
+		</div>
+        <!--编辑终端-->
+        <div class="modal hide fade" id="myModal2">
+{#			<div class="modal-header">#}
+{#				<button type="button" class="close" data-dismiss="modal">×</button>#}
+{#				<h3>新增学校</h3>#}
+{#			</div>#}
+			<div class="modal-body">
+				<div class="row-fluid">
+				<div class="box span12">
+					<div class="box-header">
+						<h2><i class="icon-edit"></i>编辑终端</h2>
+{#						<div class="box-icon">#}
+{#							<a href="#" class="btn-setting"><i class="icon-wrench"></i></a>#}
+{#							<a href="#" class="btn-minimize"><i class="icon-chevron-up"></i></a>#}
+{#							<a href="#" class="btn-close"><i class="icon-remove"></i></a>#}
+{#						</div>#}
+					</div>
+					<div class="box-content">
+
+						<form class="form-horizontal" action="/terminial_list_edit_save/" method="post"/>
+                        {% csrf_token %}
+{#						  <fieldset>#}
+							<div class="control-group">
+							  <label class="control-label" for="typeahead">终端名称 </label>
+							  <div class="controls">
+								<input type="text" class="span6 typeahead" name="terminial_name" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />
+{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">学校 </label>
+							  <div class="controls">
+								<input type="text" class="span6 typeahead" name="school_name" id="typeahead" data-provide="typeahead" data-items="4" readonly="readonly" data-source='{{ schools }}' />
+								<p class="help-block">输入学校名称的字搜索！ </p>
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">TeamViewerID </label>
+							  <div class="controls">
+								<input type="text" name="teamviewerid" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">AnyDeskID </label>
+							  <div class="controls">
+								<input type="text" name="anydeskid" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">地址 </label>
+							  <div class="controls">
+								<input type="text" name="address" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />{#								<p class="help-block">Start typing to activate auto complete!</p>#}
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label"  for="typeahead">学校联系人 </label>
+							  <div class="controls">
+								<input type="text" name="contect_person" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label"  for="typeahead">上门维护人 </label>
+							  <div class="controls">
+								<input type="text" name="contect_person2" class="span6 typeahead" id="typeahead" data-provide="typeahead" data-items="4" data-source='[]' />
+							  </div>
+							</div>
+
+							<div class="control-group">
+							  <label class="control-label" for="date01">硬件维保到期日 </label>
+							  <div class="controls">
+                                  <p class="help-block">[MM-DD-YYYY]</p>
+								<input type="text" name="hardware_period" class="input-xlarge datepicker" id="date01" value="09/09/2009" />
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">终端型号 </label>
+							  <div class="controls">
+                                  <select id="terminial_type" name="terminial_type" >
+                                      <option value="" selected="selected">请选择</option>
+                                       {% for terminialType in terminialTypes %}
+                                          <option value={{ terminialType.id }}>{{ terminialType.type_name }}</option>
+                                      {% endfor %}
+                                  </select>
+
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">打印机型号 </label>
+							  <div class="controls">
+                                  <select id="printer" name="printer" >
+                                      <option value="" selected="selected">请选择</option>
+                                       {% for printer in printers %}
+                                          <option value={{ printer.id }}>{{ printer.printer_name }}</option>
+                                      {% endfor %}
+                                  </select>
+
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="typeahead">一卡通型号 </label>
+							  <div class="controls">
+                                  <select id="wiscard_name" name="wiscard_name" >
+                                      <option value="" selected="selected">请选择</option>
+                                       {% for wiscard in wiscards %}
+                                          <option value={{ wiscard.id }}>{{ wiscard.wiscard_name }}</option>
+                                      {% endfor %}
+                                  </select>
+
+							  </div>
+							</div>
+                            <div class="control-group">
+							  <label class="control-label" for="textarea2">备注</label>
+							  <div class="controls">
+								<textarea  id="textarea2" class="wscont" name="remarks" rows="15" style="width:280px; height:300px"></textarea>
+							  </div>
+							</div>
+							<div class="form-actions">
+							  <button type="submit" class="btn btn-primary">保存</button>
+							  <button type="reset"  data-dismiss="modal" class="btn">退出</button>
+							</div>
+                            <input type="hidden" name="school_id" value={{ school.id }}>
+                            <input type="hidden" name="id" >
+{#						  </fieldset>#}
+						</form>
+
+					</div>
+				</div><!--/span-->
+
+			</div><!--/row-->
+			</div>
+{#			<div class="modal-footer">#}
+{#				<a href="#" class="btn" data-dismiss="modal">取消</a>#}
+{#				<a href="#" class="btn btn-primary">保存</a>#}
+{#			</div>#}
+		</div>
+        {% endblock %}
+        {% block js %}
+        <script>
+        $(function(){
+
+            $("#canceladdschool").click(function(){
+                $("input[name='terminial_name']").val("");
+                    {#alert(data.school[1]);#}
+                {#$("input[name='school_name']").val("");#}
+                $("input[name='teamviewerid']").val("");
+                $("input[name='anydeskid']").val("");
+                $("input[name='address']").val("");
+                $("input[name='contect_person']").val("");
+                $("input[name='contect_person2']").val("");
+                $("input[name='hardware_period']").val("09/09/2009");
+                {#$("textarea[name='remarks']").val("打印机序列号：\\r\\n一卡通配\n" +#}
+                {#    "置信息：");#}
+                $("select[name='terminial_type']").val("").attr("selected", true);
+                $("select[name='printer']").val("").attr("selected", true);
+                $("select[name='wiscard_name']").val("").attr("selected", true);
+
+            });
+            $(".btn-setting").click(function(){
+                $("input[name='terminial_name']").val("");
+                    {#alert(data.school[1]);#}
+                {#$("input[name='school_name']").val("");#}
+                $("input[name='teamviewerid']").val("");
+                $("input[name='anydeskid']").val("");
+                $("input[name='address']").val("");
+                $("input[name='contect_person']").val("");
+                $("input[name='contect_person2']").val("");
+                $("input[name='hardware_period']").val("09/09/2009");
+                {#$("textarea[name='remarks']").val("打印机序列号：\\r\\n一卡通配\n" +#}
+                {#    "置信息：");#}
+                $("select[name='terminial_type']").val("").attr("selected", true);
+                $("select[name='printer']").val("").attr("selected", true);
+                $("select[name='wiscard_name']").val("").attr("selected", true);
+
+            });
+
+            $("a[name=\"btn-setting2\"]").click(function(b){
+                b.preventDefault();
+                {#alert($('#btn-setting2').attr('href'));#}
+                $("#myModal2").modal("show");
+
+                $.ajax({
+                    url:'/terminial_list_edit/',
+                    type:'post',
+                    data:{"id":$(this).attr('href')}
+                }).done(function(data){
+                    for(var i = 0,len = data.wiscard.length; i<len ;i++){
+                        $new = $( "<option value="+data.wiscard[i][0] +">"+  data.wiscard[i][1]  +"</option>" );
+                        $("#wiscard_name").append( $new );
+                    }
+                    {#alert(data.terminial[10]);#}
+                    $("input[name='terminial_name']").val(data.terminial[0]);
+                    {#alert(data.school[1]);#}
+                    $("input[name='school_name']").val(data.terminial[8]).attr("selected", true);
+                    $("input[name='teamviewerid']").val(data.terminial[1]);
+                    $("input[name='anydeskid']").val(data.terminial[2]);
+                    $("input[name='address']").val(data.terminial[11]);
+                    $("input[name='id']").val(data.terminial[12]);
+                    $("input[name='contect_person']").val(data.terminial[4]);
+                    $("input[name='contect_person2']").val(data.terminial[5]);
+                    $("input[name='hardware_period']").val(data.terminial[3]);
+                    $("textarea[name='remarks']").val(data.terminial[6]);
+                    $("select[name='terminial_type']").val(data.terminial[9]).attr("selected", true);
+                    $("select[name='printer']").val(data.terminial[7]).attr("selected", true);
+                    $("select[name='wiscard_name']").val(data.terminial[10]).attr("selected", true);
+
+                });
+            });
+            })
+        </script>
+        <script src="/static/js/custom.min.js"></script>
+        {% endblock %}
