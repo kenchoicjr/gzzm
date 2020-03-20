@@ -28,12 +28,12 @@ menu = '''{
            "sub_button":
            [{
                "type":"click",
-               "name":"告警助手",
+               "name":"维护手册",
                "key":"123"
             },
             {
                "type":"click",
-               "name":"帮助系统",
+               "name":"排错指引",
                "key":"456"
             }
             ]

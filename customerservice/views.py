@@ -40,14 +40,14 @@ def login(request):
     if user is None:
         request.session['errormessage'] = "用户名和密码不正确!"
         return redirect('/index')
-    print(user.provinces)
+    # print(user.provinces)
     if user.user_name == username and user.password == password and user.loginstate == 1:
         request.session['user_name'] = user.user_name
         request.session['nick_name'] = user.nick_name
         request.session['user_headimgurl'] = user.headimgurl
         request.session['user_role'] = user.role
         request.session['user_provinces'] = user.provinces
-        print(request.session['user_name'], request.session['user_headimgurl'])
+        # print(request.session['user_name'], request.session['user_headimgurl'])
         return redirect('/schools_list')
     elif user.user_name == username and user.password == password and user.loginstate == 0:
         request.session['errormessage'] = "用户名未授权!"
@@ -66,16 +66,16 @@ def schools_list(request):
     # print(request.session.get("user_name"))
     if request.GET.get('code') is not None:
         code = request.GET.get('code')
-        print("---------------------------" + code)
+        # print("---------------------------" + code)
         state = request.GET.get('state')
-        print(state)
+        # print(state)
         gettoken = 'https://api.weixin.qq.com/sns/oauth2/access_token?appid=' + appid + \
                    '&secret=' + secret + '&code=' + code + '&grant_type=authorization_code'
-        print(gettoken)
+        # print(gettoken)
         f = urllib.request.urlopen(gettoken)
         stringjson = f.read()
         openid = json.loads(stringjson)['openid']
-        print(openid)
+        # print(openid)
         user = User.objects.get(user_name=openid)
         if state == '1' and user.loginstate == 1:
             request.session['user_name'] = user.user_name
@@ -83,7 +83,7 @@ def schools_list(request):
             request.session['user_headimgurl'] = user.headimgurl
             request.session['user_role'] = user.role
             request.session['user_provinces'] = user.provinces
-            print(request.session['user_name'], request.session['user_headimgurl'])
+            # print(request.session['user_name'], request.session['user_headimgurl'])
             return redirect('/schools_list')
         else:
             request.session['errormessage'] = "用户未授权!"
@@ -93,7 +93,7 @@ def schools_list(request):
     # schools = School.objects.all()
     user_role = request.session.get("user_role")
     user_provinces = request.session.get("user_provinces")
-    print("-" * 50, user_role, user_provinces)
+    # print("-" * 50, user_role, user_provinces)
     schools = School.objects.filter(province='0')
     # print(schools)
     if user_role == '管理员':
@@ -101,7 +101,7 @@ def schools_list(request):
     elif user_role == '城市负责人':
         provinces = user_provinces.split(",")
         for province in provinces:
-            print(province)
+            # print(province)
             schools = schools | (School.objects.filter(province=province))
 
     provinces = Province.objects.all()
@@ -114,9 +114,9 @@ def order_list(request):
     user_name = request.session.get("user_name")
     user_provinces = request.session.get("user_provinces")
     user = User.objects.get(user_name=user_name)
-    print("user", user.id)
+    # print("user", user.id)
     school_id = request.GET.get('school_id')
-    print("school_id", school_id)
+    # print("school_id", school_id)
     school_id = school_id if school_id is not None else "0"
     if school_id == "0":
         if user_role == "管理员":
@@ -133,7 +133,7 @@ def order_list(request):
             orders = Order.objects.filter(school_id=school_id) | Order.objects.filter(user_id=user.id)
 
     content = {"orders": orders}
-    print(orders)
+    # print(orders)
     return render(request, 'order_list.html', content)
 
 
@@ -180,7 +180,7 @@ def schoolAdd(request):
 @csrf_exempt
 def schoolEditSave(request):
     # print("--" * 10)
-    print("--" * 10, request.POST.get("school_id"))
+    # print("--" * 10, request.POST.get("school_id"))
     school_id = request.POST.get("school_id")
     school = School.objects.get(id=school_id)
     province = Province()
@@ -204,7 +204,7 @@ def schoolEditSave(request):
 
 @csrf_exempt
 def schoolEdit(request):
-    print(request.POST.get('id'))
+    # print(request.POST.get('id'))
     school = School.objects.get(id=request.POST.get('id'))
     cities = City.objects.filter(province_id=school.province.id)
     list = ["school", school]
@@ -213,7 +213,7 @@ def schoolEdit(request):
         res2.append([i.id, i.city_name])
     res = [school.school_name, school.province.id, school.city.id, school.address, school.contect_person,
            school.project_nature, school.software_period, school.id]
-    print(res)
+    # print(res)
     # 发送消息
     # print(sendmsg(request))
 
@@ -232,7 +232,7 @@ def terminial_list(request, id):
     elif user_role == '城市负责人':
         provinces = user_provinces.split(",")
         for province in provinces:
-            print(province)
+            # print(province)
             schools = schools | (School.objects.filter(province=province))
 
     # print(school)
@@ -243,7 +243,7 @@ def terminial_list(request, id):
     wiscards = Wiscard.objects.all()
     schools_all = []
     for i in schools:
-        print(i.school_name)
+        # print(i.school_name)
         schools_all.append(i.school_name)
     schoolJson = json.dumps(schools_all, ensure_ascii=False)
     # print(schoolJson)
@@ -258,7 +258,7 @@ def terminialAdd(request):
     school_id = request.POST.get('school_id')
     # terminial_type = TerminialType.objects.filter(terminial_type=request.POST.get('terminial_type'))
 
-    print(school_name, school_id)
+    # print(school_name, school_id)
     terminial = Terminial()
     terminial.terminial_name = request.POST.get('terminial_name')
     terminial.teamviewerid = request.POST.get('teamviewerid')
@@ -283,7 +283,7 @@ def terminialEditSave(request):
     terminial = Terminial.objects.get(id=id)
     terminial.terminial_name = request.POST.get('terminial_name')
     terminial.teamviewerid = request.POST.get('teamviewerid')
-    print(terminial.teamviewerid)
+    # print(terminial.teamviewerid)
     terminial.anydeskid = request.POST.get('anydeskid')
     terminial.hardware_period = request.POST.get('hardware_period')
     terminial.address = request.POST.get('address')
@@ -300,7 +300,7 @@ def terminialEditSave(request):
 
 @csrf_exempt
 def terminialEdit(request):
-    print(request.POST.get('id'))
+    # print(request.POST.get('id'))
     terminial = Terminial.objects.get(id=request.POST.get('id'))
     # cities = City.objects.filter(province_id=terminial.province.id)
     # list = ["school",terminial]
@@ -318,14 +318,14 @@ def terminialEdit(request):
     for i in wiscards:
         res2.append([i.id, i.wiscard_name])
     # terminialJson = serializers.serialize("json", terminial)
-    print(res)
+    # print(res)
     return JsonResponse({'terminial': res, 'wiscard': res2}, safe=False, json_dumps_params={'ensure_ascii': False})
     # return redirect('/schools_list')
 
 
 @csrf_exempt
 def order_edit(request):
-    print(request.POST.get('id'))
+    # print(request.POST.get('id'))
     order = Order.objects.get(id=request.POST.get('id'))
     status = Status.objects.all()
     classification = Classification.objects.all()
@@ -350,7 +350,7 @@ def order_edit(request):
     res = [order.school.school_name, order.terminial.terminial_name, order.job, order.user.id, order.status.id,
            order.classification.id, order_type_id, order.value1, order.value2, order.remarks, order.id]
     content = {'orders': res, 'status': res3, 'classification': res5, 'users': res2, 'order_type': res4,'user_role': request.session.get("user_role")}
-    print(content)
+    # print(content)
     return JsonResponse(content,
                         safe=False, json_dumps_params={'ensure_ascii': False})
 
@@ -365,7 +365,7 @@ def order_add(request):
     elif user_role == '城市负责人':
         provinces = user_provinces.split(",")
         for province in provinces:
-            print(province)
+            # print(province)
             schools = schools | (School.objects.filter(province=province))
 
     schools_all = []
@@ -406,7 +406,7 @@ def order_add_save(request):
     order = Order()
     order.school = School.objects.get(school_name=school_name)
     terminial_namea = request.POST.get('terminial_namea')
-    print(terminial_namea)
+    # print(terminial_namea)
     order.terminial = Terminial.objects.get(id=terminial_namea)
     order.job = request.POST.get('job')
     classification = request.POST.get('classification')
@@ -422,7 +422,7 @@ def order_add_save(request):
     order.create_date = datetime.now().strftime('%Y-%m-%d')
     if request.POST.get("status") == "2":
         order.comleted_date = datetime.now().strftime('%Y-%m-%d')
-        print(order.comleted_date)
+        # print(order.comleted_date)
     order.value1 = request.POST.get('value1')
     order.value2 = request.POST.get('value2')
     order.remarks = request.POST.get('remarks')
@@ -451,20 +451,20 @@ def termail_a(request):
     for i in termail:
         termail_a.append([i.id, i.terminial_name])
     content = {'termailJson': termail_a}
-    print(termail_a)
+    # print(termail_a)
     return JsonResponse(content, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
 @csrf_exempt
 def classification_a(request):
     classification = Classification.objects.get(id=request.POST.get('classification'))
-    print(classification)
+    # print(classification)
     order_type = OrderType.objects.filter(classification=classification)
     classification = []
     for i in order_type:
         classification.append([i.id, i.order_type])
     content = {'classificationJson': classification}
-    print(classification)
+    # print(classification)
     return JsonResponse(content, safe=False, json_dumps_params={'ensure_ascii': False})
 
 
@@ -473,7 +473,7 @@ def order_edit_save(request):
     order = Order.objects.get(id=request.POST.get("orderide"))
     if request.POST.get("statuse") == "2":
         order.comleted_date = datetime.now().strftime('%Y-%m-%d')
-        print(order.comleted_date)
+        # print(order.comleted_date)
     order.status = Status.objects.get(id=request.POST.get("statuse"))
     order.school = School.objects.get(school_name=request.POST.get("school_namee"))
     order.terminial = Terminial.objects.get(terminial_name=request.POST.get("terminial_namee"))

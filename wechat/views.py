@@ -11,16 +11,20 @@ from django.shortcuts import render, redirect
 from customerservice.models import User
 import urllib.request
 
-appid = 'wx3c868c4551f594de'
-secret = 'ab69766cc4fffba541db0c945b5fc2cc'
 
-gettoken = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + appid + '&secret=' + secret
+def get_accesa_token():
+    appid = 'wx3c868c4551f594de'
+    secret = 'ab69766cc4fffba541db0c945b5fc2cc'
 
-f = urllib.request.urlopen(gettoken)
+    gettoken = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + appid + '&secret=' + secret
 
-stringjson = f.read()
+    f = urllib.request.urlopen(gettoken)
 
-access_token = json.loads(stringjson)['access_token']
+    stringjson = f.read()
+
+    access_token = json.loads(stringjson)['access_token']
+
+    return access_token
 
 
 # django默认开启csrf防护，这里使用@csrf_exempt去掉防护
@@ -109,7 +113,7 @@ def autoreply(request):
             CreateTime = xmlData.find('CreateTime').text
             Event = xmlData.find('Event').text
             if Event == 'subscribe':
-                customer_detail = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + '&openid=' + toUser
+                customer_detail = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + get_accesa_token() + '&openid=' + toUser
                 customerf = urllib.request.urlopen(customer_detail)
                 customerjson = customerf.read()
                 headimgurl = json.loads(customerjson)['headimgurl']
@@ -130,7 +134,7 @@ def autoreply(request):
                     user.loginstate = '0'
                     user.save()
 
-                content = "地址：%s\n/用户名：%s\n密码：%s" % ("http://1u818m7919.iask.in/index/",user.user_name, user.password)
+                content = "地址：%s\n/用户名：%s\n密码：%s" % ("http://1u818m7919.iask.in/index/", user.user_name, user.password)
                 # print(content)
                 replyMsg = TextMsg(toUser, fromUser, content)
                 return replyMsg.send()
@@ -143,7 +147,7 @@ def autoreply(request):
                 replyMsg = TextMsg(toUser, fromUser, content)
                 return replyMsg.send()
             else:
-                customer_detail = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + access_token + '&openid=' + toUser
+                customer_detail = 'https://api.weixin.qq.com/cgi-bin/user/info?access_token=' + get_accesa_token() + '&openid=' + toUser
                 customerf = urllib.request.urlopen(customer_detail)
                 customerjson = customerf.read()
                 print(customerjson.decode("utf-8"))
@@ -151,7 +155,7 @@ def autoreply(request):
                 print(headimgurl)
                 print(toUser, CreateTime, Event)
                 content = toUser, CreateTime, Event
-                replyMsg = TextMsg(toUser, fromUser, content)
+                replyMsg = TextMsg(toUser, fromUser, "暂未开放")
                 return replyMsg.send()
     except Exception as e:
         print(e.args)
