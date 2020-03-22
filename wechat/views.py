@@ -10,11 +10,11 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from customerservice.models import User
 import urllib.request
-
+from django.conf import settings
 
 def get_accesa_token():
-    appid = 'wx3c868c4551f594de'
-    secret = 'ab69766cc4fffba541db0c945b5fc2cc'
+    appid = settings.MY_APPID
+    secret = settings.MY_SECRET
 
     gettoken = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + appid + '&secret=' + secret
 

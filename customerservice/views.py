@@ -15,9 +15,14 @@ from wechat.sendmsg import *
 from django.core import serializers
 import itertools
 from django.forms.models import model_to_dict
+from django.conf import settings
+import logging
 
-appid = 'wx3c868c4551f594de'
-secret = 'ab69766cc4fffba541db0c945b5fc2cc'
+# 指定所用的logger
+logger = logging.getLogger('log')
+
+appid = settings.MY_APPID
+secret = settings.MY_SECRET
 
 
 def props(obj):
@@ -34,13 +39,14 @@ def login(request):
     username = request.POST.get('username')
     password = request.POST.get('password')
     user = User.objects.get(user_name=username)
+
     if len(username) == 0:
         request.session['errormessage'] = "请输入用户名！"
         return redirect('/index')
     if user is None:
         request.session['errormessage'] = "用户名和密码不正确!"
         return redirect('/index')
-    # print(user.provinces)
+
     if user.user_name == username and user.password == password and user.loginstate == 1:
         request.session['user_name'] = user.user_name
         request.session['nick_name'] = user.nick_name
@@ -48,6 +54,8 @@ def login(request):
         request.session['user_role'] = user.role
         request.session['user_provinces'] = user.provinces
         # print(request.session['user_name'], request.session['user_headimgurl'])
+        # logger.info(user,"登录了")
+        logger.info(user.__str__() + "：通过网页进来了！")
         return redirect('/schools_list')
     elif user.user_name == username and user.password == password and user.loginstate == 0:
         request.session['errormessage'] = "用户名未授权!"
@@ -84,6 +92,7 @@ def schools_list(request):
             request.session['user_role'] = user.role
             request.session['user_provinces'] = user.provinces
             # print(request.session['user_name'], request.session['user_headimgurl'])
+            logger.info(user.__str__() + "：通过微信进来了！")
             return redirect('/schools_list')
         else:
             request.session['errormessage'] = "用户未授权!"
@@ -91,6 +100,7 @@ def schools_list(request):
     if request.session.get("user_name") is None:
         return redirect('/index')
     # schools = School.objects.all()
+
     user_role = request.session.get("user_role")
     user_provinces = request.session.get("user_provinces")
     # print("-" * 50, user_role, user_provinces)
@@ -349,7 +359,8 @@ def order_edit(request):
     order_type_id = order.order_type.id if order.order_type.id is not None else 0
     res = [order.school.school_name, order.terminial.terminial_name, order.job, order.user.id, order.status.id,
            order.classification.id, order_type_id, order.value1, order.value2, order.remarks, order.id]
-    content = {'orders': res, 'status': res3, 'classification': res5, 'users': res2, 'order_type': res4,'user_role': request.session.get("user_role")}
+    content = {'orders': res, 'status': res3, 'classification': res5, 'users': res2, 'order_type': res4,
+               'user_role': request.session.get("user_role")}
     # print(content)
     return JsonResponse(content,
                         safe=False, json_dumps_params={'ensure_ascii': False})

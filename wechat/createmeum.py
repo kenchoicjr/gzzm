@@ -5,20 +5,22 @@ import urllib.request
 # from urllib import urlencode
 import json
 import datetime
+from django.conf import settings
+import os, django
 
-appid = 'wx3c868c4551f594de'
-secret = 'ab69766cc4fffba541db0c945b5fc2cc'
+# project_name 项目名称
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gzzm.settings")
+django.setup()
+
+# print(settings.IP_LOCAL)
+appid = settings.MY_APPID
+secret = settings.MY_SECRET
 
 gettoken = 'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=' + appid + '&secret=' + secret
-
 f = urllib.request.urlopen(gettoken)
-
 stringjson = f.read()
-
 access_token = json.loads(stringjson)['access_token']
-
 # print access_token
-
 posturl = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=" + access_token
 
 menu = '''{
